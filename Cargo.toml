@@ -1,5 +1,5 @@
 [workspace]
 
 members = [
-    "swap_traits",
+    "components/*",
 ]
