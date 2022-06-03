@@ -24,12 +24,12 @@ pub trait IUniswapV2Factory {
     #[ink(event)]
     struct PairCreated {
         #[ink(topic)]
-        token: AccountId,
+        token: Option<AccountId>,
 
         #[ink(topic)]
-        token1: AccountId,
+        token1: Option<AccountId>,
 
-        pair: AccountId,
+        pair: Option<AccountId>,
 
         log_value: u32 //1 for the first pair created, 2 for the second
     }
@@ -53,7 +53,9 @@ pub trait IUniswapV2Factory {
         #[ink(message)]
         pub fn allPairsLength() -> log_value;
 
-        pub fn createPair(tokenA: AccountId, tokenB: AccountId) -> pair;
+        pub fn createPair(&self, tokenA: AccountId, tokenB: AccountId) -> Self{  //Not sure how to use self in this case
+            pair
+        }
 
         #[ink(message)]
         pub fn satFeeTo(address: AccountId);
