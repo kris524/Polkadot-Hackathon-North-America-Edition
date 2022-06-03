@@ -8,6 +8,6 @@ use ink_lang as ink;
 pub trait IUniswapV2Callee {
 
     //All public functions must use this attribute
-    #[ink(message)]
+    #[ink(message, payable)]
     fn uniswapV2Call(sender: &AccountId , amount0: u256, amount1: u256, data: Vec<u32>); //What does this thing return???
 }  
