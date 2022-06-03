@@ -1,0 +1,10 @@
+{
+  "name": "swap-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Swap workspace",
+  "scripts": {
+    "build": "cd www && npm run build",
+    "dev": "cd www && npm run dev"
+  }
+}
