@@ -20,28 +20,47 @@ use ink_lang as ink;
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
 
+    //helpful docs: https://docs.uniswap.org/protocol/V2/reference/smart-contracts/factory
     #[ink(event)]
     struct PairCreated {
         #[ink(topic)]
-        token0: AccountId,
+        token: AccountId,
 
         #[ink(topic)]
         token1: AccountId,
 
         pair: AccountId,
 
+        log_value: u32 //1 for the first pair created, 2 for the second
     }
 
-    #[ink(message)]
-    pub fn feeTo(&self) -> AccountId;
+    impl PairCreated {
+        // Not sure at all if this should be here or if need to have PairCreated implementaiton
+        // fn new(token1: AccountId, token0: AccountId, pair: AccountId) -> PairCreated {
+        //     PairCreated { toekn0: token1, }
+        // } 
+        // I am guessing the equivalent is createPair
 
-    #[ink(message)]
-    pub fn feeToSetter(&self) -> AccountId;
+        #[ink(message)]
+        pub fn feeTo(&self) -> AccountId;
+        #[ink(message)]
+        pub fn feeToSetter(&self) -> AccountId;
 
-    #[ink(message)]
-    pub fn satFeeTo(address: AccountId);
+        #[ink(message)]
+        pub fn getPair(toeknA: AccountId, tokenB: AccountId) -> pair;
+        #[ink(message)]
+        pub fn allPairs(log_value: u32) -> pair;
+        #[ink(message)]
+        pub fn allPairsLength() -> log_value;
 
-    #[ink(message)]
-    pub fn setFeeToSetter(address: AccountId);
+        pub fn createPair(tokenA: AccountId, tokenB: AccountId) -> pair;
 
-} 
+        #[ink(message)]
+        pub fn satFeeTo(address: AccountId);
+
+        #[ink(message)]
+        pub fn setFeeToSetter(address: AccountId);
+
+    }            
+
+}
