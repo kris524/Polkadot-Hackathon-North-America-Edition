@@ -26,6 +26,11 @@ in either case adding its `bin` directory to your `PATH` environment variable.
 [Binaryen]: https://github.com/WebAssembly/binaryen
 [br]: https://github.com/WebAssembly/binaryen/releases
 
+For the web frontend:
+
+```
+(cd www && npm install)
+```
 
 ## Building
 
@@ -35,6 +40,17 @@ At the moment ink crates have to be built individually:
 cargo contract build --manifest-path=components/swap_traits/Cargo.toml
 ```
 
+For the web frontend:
+
+```
+npm run build
+```
+
+or to serve it with live reloading:
+
+```
+npm run dev
+```
 
 ## License
 
