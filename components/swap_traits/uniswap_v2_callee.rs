@@ -10,5 +10,5 @@ pub trait IUniswapV2Callee {
 
     //All public functions must use this attribute
     #[ink(message)]
-    fn uniswapV2Call(&self, sender: AccountId , amount0: u64, amount1: u64, data: Vec<u32>);
+    fn uniswap_v2_call(&self, sender: AccountId , amount0: u64, amount1: u64, data: Vec<u32>);
 }  

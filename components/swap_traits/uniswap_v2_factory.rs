@@ -1,7 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-
 use ink_lang as ink;
-use ink_env::AcountId;
+use ink_env::AccountId;
 // Note on access modifier (https://www.c-sharpcorner.com/article/variables-and-types-in-solidity/)
 // Public
 // The Public element can be inherited and can be accessed by external elements. All can access a public element. 
@@ -19,9 +18,6 @@ use ink_env::AcountId;
 // (https://paritytech.github.io/ink/ink_lang/attr.contract.html#:~:text=Note%3A-,An,-ink!%20message%20with)
 
 
-// #[ink::contract]
-// mod erc20 {
-
 //     #[ink(event)]
 //     pub struct PairCreated {
 //         #[ink(topic)]
@@ -35,16 +31,6 @@ use ink_env::AcountId;
 //         log_value: u32 //1 for the first pair created, 2 for the second
 //     }
 
-//     #[ink(storage)]
-//     pub struct Erc20 {
-//         total_supply: Balance
-//     }
-
-
-
-
-// }
-
 
 
 #[ink::trait_definition]
@@ -52,27 +38,28 @@ pub trait IUniswapV2Factory {
 
     //helpful docs: https://docs.uniswap.org/protocol/V2/reference/smart-contracts/factory
     
+    #[ink(message)]
+    fn create_pair(&self, token_a: AccountId, token_b: AccountId) -> AccountId; 
 
     
     #[ink(message)]
-    pub fn feeTo(&self) -> AccountId;
+    fn fee_to(&self) -> AccountId;
     #[ink(message)]
-    pub fn feeToSetter(&self) -> AccountId;
+    fn fee_to_setter(&self) -> AccountId;
 
     #[ink(message)]
-    pub fn getPair(toeknA: AccountId, tokenB: AccountId) -> AccountId;
+    fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId;
     #[ink(message)]
-    pub fn allPairs(log_value: u32) -> AccountId;
+    fn all_pairs(&self, log_value: u64) -> AccountId;
     #[ink(message)]
-    pub fn allPairsLength() -> log_value;
+    fn all_pairs_length(&self) -> u64;
 
-    pub fn createPair(&self, tokenA: AccountId, tokenB: AccountId) -> AccountId; 
+    
+    #[ink(message)]
+    fn sat_fee_to(&self,address: AccountId);
 
     #[ink(message)]
-    pub fn satFeeTo(address: AccountId);
-
-    #[ink(message)]
-    pub fn setFeeToSetter(address: AccountId);
+    fn set_fee_to_setter(&self, address: AccountId);
 
                 
 
