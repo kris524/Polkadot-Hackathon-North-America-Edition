@@ -2,11 +2,6 @@
 use ink_lang as ink;
 use ink_env::AccountId;
 // Note on access modifier (https://www.c-sharpcorner.com/article/variables-and-types-in-solidity/)
-// Public
-// The Public element can be inherited and can be accessed by external elements. All can access a public element. 
-// External
-// The External element can’t be inherited but it can be accessed by external elements
-
 
 // View functions are read only functions and do not modify the state of the block chain. 
 // In other words if you want to read data from the block chain one can use view. 
@@ -18,6 +13,7 @@ use ink_env::AccountId;
 // (https://paritytech.github.io/ink/ink_lang/attr.contract.html#:~:text=Note%3A-,An,-ink!%20message%20with)
 
 
+//TODO: Add this inside the contract
 //     #[ink(event)]
 //     pub struct PairCreated {
 //         #[ink(topic)]
@@ -49,11 +45,14 @@ pub trait IUniswapV2Factory {
 
     #[ink(message)]
     fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId;
-    #[ink(message)]
-    fn all_pairs(&self, log_value: u64) -> AccountId;
-    #[ink(message)]
-    fn all_pairs_length(&self) -> u64;
 
+    #[ink(message)]
+    //TODO:Change log_value to U256
+    fn all_pairs(&self, log_value: u64) -> AccountId;
+
+    #[ink(message)]
+    //TODO: Change the return to U256
+    fn all_pairs_length(&self) -> u64;
     
     #[ink(message)]
     fn sat_fee_to(&self,address: AccountId);
