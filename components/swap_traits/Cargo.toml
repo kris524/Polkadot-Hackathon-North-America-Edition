@@ -18,8 +18,7 @@ scale-info = { version = "2", default-features = false, features = ["derive"], o
 name = "swap_traits"
 path = "lib.rs"
 crate-type = [
-	# Used for normal contract Wasm blobs.
-	"cdylib",
+	"rlib", # Just a library, not a contract.
 ]
 
 [features]
