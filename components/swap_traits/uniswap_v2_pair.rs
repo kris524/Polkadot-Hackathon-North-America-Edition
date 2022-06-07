@@ -7,11 +7,10 @@
 //! - <https://docs.uniswap.org/protocol/V2/reference/smart-contracts/Pair-ERC-20>
 //! - <https://github.com/paritytech/ink/blob/master/examples/trait-erc20/lib.rs>
 
-use ink_lang as ink;
 use ink_env::AccountId;
+use ink_lang as ink;
 use ink_prelude::string::String;
 use ink_prelude::vec::Vec;
-
 
 // #[ink(event)]
 // struct Approval{
@@ -35,12 +34,10 @@ use ink_prelude::vec::Vec;
 //     value: Balance,
 // }
 
-
 #[ink::trait_definition]
 pub trait IUniswapV2Pair {
-
     #[ink(message)]
-    fn name(&self) -> String; 
+    fn name(&self) -> String;
 
     #[ink(message)]
     fn symbol(&self) -> String;
@@ -77,7 +74,16 @@ pub trait IUniswapV2Pair {
 
     // function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external;
     #[ink(message)]
-    fn permit(&mut self, owner: AccountId, spender: AccountId, value: u64, deadline: u64, v: u8, r: Vec<u8>, s: Vec<u8>);
+    fn permit(
+        &mut self,
+        owner: AccountId,
+        spender: AccountId,
+        value: u64,
+        deadline: u64,
+        v: u8,
+        r: Vec<u8>,
+        s: Vec<u8>,
+    );
 
     //event Mint, Burn, Swap, Sync
 
@@ -115,7 +121,7 @@ pub trait IUniswapV2Pair {
 
     // function swap(uint amount0Out, uint amount1Out, address to, bytes calldata data) external;
     #[ink(message)]
-    fn swap(&mut self, amount0_out: u64,amount1_out: u64, to: AccountId, data: Vec<u8> );
+    fn swap(&mut self, amount0_out: u64, amount1_out: u64, to: AccountId, data: Vec<u8>);
 
     #[ink(message)]
     fn skim(&mut self, to: AccountId);
@@ -126,5 +132,4 @@ pub trait IUniswapV2Pair {
     // function initialize(address, address) external;
     #[ink(message)]
     fn initialize(&mut self, address1: AccountId, address2: AccountId);
-
 }
