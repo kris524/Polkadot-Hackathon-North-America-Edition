@@ -16,7 +16,7 @@ mod uniswap_v2_erc20 {
     pub struct UniswapV2Erc20 {
         pub total_supply: Balance,
         pub balance_of: Mapping<AccountId, Balance>,
-        pub allowances: Mapping<(AccountId, AccountId), Balance>,
+        pub allowance: Mapping<(AccountId, AccountId), Balance>,
     }
 
     /// Event emitted when a token transfer occurs.
@@ -44,10 +44,9 @@ mod uniswap_v2_erc20 {
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
-        /// Returned if not enough balance to fulfill a request is available.
         InsufficientBalance,
-        /// Returned if not enough allowance to fulfill a request is available.
         InsufficientAllowance,
+        BalanceOverflowOrUnderflow,
     }
 
     /// The ERC-20 result type.
@@ -100,15 +99,20 @@ mod uniswap_v2_erc20 {
                 return Err(Error::InsufficientAllowance);
             }
             self.transfer_from_to(&from, &to, value)?;
-            self.allowances
-                .insert((&from, &caller), &(allowance - value));
+
+            if let Some(allowance) = allowance.checked_sub(value) {
+                self.allowance.insert((&from, &caller), &(allowance));
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
+
             Ok(())
         }
 
         #[ink(message)]
-        pub fn permit(&mut self, spender: AccountId, value: Balance) -> Result<()> {
+        pub fn approve(&mut self, spender: AccountId, value: Balance) -> Result<()> {
             let owner = self.env().caller();
-            self.allowances.insert((&owner, &spender), &value);
+            self.allowance.insert((&owner, &spender), &value);
             self.env().emit_event(Approval {
                 owner,
                 spender,
@@ -129,11 +133,19 @@ mod uniswap_v2_erc20 {
         }
 
         fn mint(&mut self, to: &AccountId, value: Balance) -> Result<()> {
-            self.total_supply.checked_add(value);
+            if let Some(total_supply) = self.total_supply.checked_add(value) {
+                self.total_supply = total_supply;
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
+            
             let to_balance = self.balance_of_impl(to);
 
-            to_balance.checked_add(value);
-            self.balance_of.insert(to, &(to_balance));
+            if let Some(to_balance) = to_balance.checked_add(value) {
+                self.balance_of.insert(to, &(to_balance));
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
 
             self.env().emit_event(Transfer {
                 from: None,
@@ -144,11 +156,19 @@ mod uniswap_v2_erc20 {
         }
 
         fn burn(&mut self, from: &AccountId, value: Balance) -> Result<()> {
-            self.total_supply.checked_sub(value);
+            if let Some(total_supply) = self.total_supply.checked_sub(value) {
+                self.total_supply = total_supply;
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
+            
             let from_balance = self.balance_of_impl(from);
 
-            from_balance.checked_sub(value);
-            self.balance_of.insert(from, &(from_balance));
+            if let Some(from_balance) = from_balance.checked_sub(value) {
+                self.balance_of.insert(from, &(from_balance));
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
 
             self.env().emit_event(Transfer {
                 from: Some(*from),
@@ -169,9 +189,21 @@ mod uniswap_v2_erc20 {
                 return Err(Error::InsufficientBalance);
             }
 
-            self.balance_of.insert(from, &(from_balance - value));
-            let to_balance = self.balance_of_impl(to);
-            self.balance_of.insert(to, &(to_balance + value));
+            let from_balance = self.balance_of_impl(from);
+
+            if let Some(from_balance) = from_balance.checked_sub(value) {
+                let to_balance = self.balance_of_impl(to);
+
+                if let Some(to_balance) = to_balance.checked_add(value) {
+                    self.balance_of.insert(to, &(to_balance));
+                    self.balance_of.insert(from, &(from_balance));
+                } else {
+                    return Err(Error::BalanceOverflowOrUnderflow);
+                }
+            } else {
+                return Err(Error::BalanceOverflowOrUnderflow);
+            }
+
             self.env().emit_event(Transfer {
                 from: Some(*from),
                 to: Some(*to),
@@ -195,7 +227,7 @@ mod uniswap_v2_erc20 {
 
         #[inline]
         fn allowance_impl(&self, owner: &AccountId, spender: &AccountId) -> Balance {
-            self.allowances.get((owner, spender)).unwrap_or_default()
+            self.allowance.get((owner, spender)).unwrap_or_default()
         }
     }
 
