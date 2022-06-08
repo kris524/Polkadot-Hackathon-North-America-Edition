@@ -4,6 +4,7 @@ use ink_lang as ink;
 
 #[ink::contract]
 mod uniswap_v2_erc20 {
+    use ink_prelude::string::{String, ToString};
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use swap_traits::{Erc20, Erc20Error, Erc20Result};
 
