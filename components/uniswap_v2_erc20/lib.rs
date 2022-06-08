@@ -7,9 +7,9 @@ mod uniswap_v2_erc20 {
     use ink_storage::traits::SpreadAllocate;
     use ink_storage::Mapping;
 
-    pub const NAME: &'static str = "Uniswap V2";
-    pub const SYMBOL: &'static str = "UNI-V2";
-    pub const DECIMALS: u32 = 18;
+    const NAME: &'static str = "Uniswap V2";
+    const SYMBOL: &'static str = "UNI-V2";
+    const DECIMALS: u8 = 18;
 
     #[ink(storage)]
     #[derive(SpreadAllocate)]
@@ -19,7 +19,6 @@ mod uniswap_v2_erc20 {
         pub allowance: Mapping<(AccountId, AccountId), Balance>,
     }
 
-    /// Event emitted when a token transfer occurs.
     #[ink(event)]
     pub struct Transfer {
         #[ink(topic)]
@@ -29,8 +28,6 @@ mod uniswap_v2_erc20 {
         value: Balance,
     }
 
-    /// Event emitted when an approval occurs that `spender` is allowed to withdraw
-    /// up to the amount of `value` tokens from `owner`.
     #[ink(event)]
     pub struct Approval {
         #[ink(topic)]
@@ -66,6 +63,21 @@ mod uniswap_v2_erc20 {
         }
 
         #[ink(message)]
+        pub fn name(&self) -> String {
+            NAME.to_string()
+        }
+
+        #[ink(message)]
+        pub fn symbol(&self) -> String {
+            SYMBOL.to_string()
+        }
+
+        #[ink(message)]
+        pub fn decimal(&self) -> u8 {
+            DECIMALS
+        }
+
+        #[ink(message)]
         pub fn total_supply(&self) -> Balance {
             self.total_supply
         }
@@ -73,11 +85,6 @@ mod uniswap_v2_erc20 {
         #[ink(message)]
         pub fn balance_of(&self, owner: AccountId) -> Balance {
             self.balance_of_impl(&owner)
-        }
-
-        #[ink(message)]
-        pub fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
-            self.allowance_impl(&owner, &spender)
         }
 
         #[ink(message)]
@@ -121,6 +128,11 @@ mod uniswap_v2_erc20 {
             Ok(())
         }
 
+        #[ink(message)]
+        pub fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
+            self.allowance_impl(&owner, &spender)
+        }
+
         fn new_init(&mut self, initial_supply: Balance) {
             let caller = Self::env().caller();
             self.balance_of.insert(&caller, &initial_supply);
@@ -138,7 +150,7 @@ mod uniswap_v2_erc20 {
             } else {
                 return Err(Error::BalanceOverflowOrUnderflow);
             }
-            
+
             let to_balance = self.balance_of_impl(to);
 
             if let Some(to_balance) = to_balance.checked_add(value) {
@@ -161,7 +173,7 @@ mod uniswap_v2_erc20 {
             } else {
                 return Err(Error::BalanceOverflowOrUnderflow);
             }
-            
+
             let from_balance = self.balance_of_impl(from);
 
             if let Some(from_balance) = from_balance.checked_sub(value) {
