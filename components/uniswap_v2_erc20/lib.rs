@@ -78,20 +78,23 @@ mod uniswap_v2_erc20 {
         }
 
         fn mint(&mut self, to: &AccountId, value: Balance) -> Erc20Result<()> {
+            let temp_total_supply;
             if let Some(total_supply) = self.total_supply.checked_add(value) {
-                self.total_supply = total_supply;
+                temp_total_supply = total_supply;
             } else {
                 return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             let to_balance = self.balance_of_impl(to);
-
+            let temp_to_balance;
             if let Some(to_balance) = to_balance.checked_add(value) {
-                self.balance_of.insert(to, &(to_balance));
+                temp_to_balance = to_balance;
             } else {
                 return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
+            self.total_supply = temp_total_supply;
+            self.balance_of.insert(to, &(temp_to_balance));
             self.env().emit_event(Transfer {
                 from: None,
                 to: Some(*to),
@@ -102,20 +105,23 @@ mod uniswap_v2_erc20 {
         }
 
         fn burn(&mut self, from: &AccountId, value: Balance) -> Erc20Result<()> {
+            let temp_total_supply;
             if let Some(total_supply) = self.total_supply.checked_sub(value) {
-                self.total_supply = total_supply;
+                temp_total_supply = total_supply;
             } else {
                 return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             let from_balance = self.balance_of_impl(from);
-
+            let temp_from_balance;
             if let Some(from_balance) = from_balance.checked_sub(value) {
-                self.balance_of.insert(from, &(from_balance));
+                temp_from_balance = from_balance;
             } else {
                 return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
+            self.total_supply = temp_total_supply;
+            self.balance_of.insert(from, &(temp_from_balance));
             self.env().emit_event(Transfer {
                 from: Some(*from),
                 to: None,
@@ -196,13 +202,16 @@ mod uniswap_v2_erc20 {
             if allowance < value {
                 return Err(Erc20Error::InsufficientAllowance);
             }
-            self.transfer_from_to(&from, &to, value)?;
 
+            let temp_allowance;
             if let Some(allowance) = allowance.checked_sub(value) {
-                self.allowance.insert((&from, &caller), &(allowance));
+                temp_allowance = allowance;
             } else {
                 return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
+
+            self.transfer_from_to(&from, &to, value)?;
+            self.allowance.insert((&from, &caller), &(temp_allowance));
 
             Ok(())
         }
