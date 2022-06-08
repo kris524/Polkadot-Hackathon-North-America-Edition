@@ -4,8 +4,8 @@ use ink_lang as ink;
 
 #[ink::contract]
 mod uniswap_v2_erc20 {
-    use ink_storage::traits::SpreadAllocate;
-    use ink_storage::Mapping;
+    use ink_storage::{traits::SpreadAllocate, Mapping};
+    use swap_traits::{Erc20, Erc20Error, Erc20Result};
 
     const NAME: &'static str = "Uniswap V2";
     const SYMBOL: &'static str = "UNI-V2";
@@ -37,18 +37,6 @@ mod uniswap_v2_erc20 {
         value: Balance,
     }
 
-    /// The ERC-20 error types.
-    #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
-    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-    pub enum Error {
-        InsufficientBalance,
-        InsufficientAllowance,
-        BalanceOverflowOrUnderflow,
-    }
-
-    /// The ERC-20 result type.
-    pub type Result<T> = core::result::Result<T, Error>;
-
     impl UniswapV2Erc20 {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance) -> Self {
@@ -77,62 +65,6 @@ mod uniswap_v2_erc20 {
             DECIMALS
         }
 
-        #[ink(message)]
-        pub fn total_supply(&self) -> Balance {
-            self.total_supply
-        }
-
-        #[ink(message)]
-        pub fn balance_of(&self, owner: AccountId) -> Balance {
-            self.balance_of_impl(&owner)
-        }
-
-        #[ink(message)]
-        pub fn transfer(&mut self, to: AccountId, value: Balance) -> Result<()> {
-            let from = self.env().caller();
-            self.transfer_from_to(&from, &to, value)
-        }
-
-        #[ink(message)]
-        pub fn transfer_from(
-            &mut self,
-            from: AccountId,
-            to: AccountId,
-            value: Balance,
-        ) -> Result<()> {
-            let caller = self.env().caller();
-            let allowance = self.allowance_impl(&from, &caller);
-            if allowance < value {
-                return Err(Error::InsufficientAllowance);
-            }
-            self.transfer_from_to(&from, &to, value)?;
-
-            if let Some(allowance) = allowance.checked_sub(value) {
-                self.allowance.insert((&from, &caller), &(allowance));
-            } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
-            }
-
-            Ok(())
-        }
-
-        #[ink(message)]
-        pub fn approve(&mut self, spender: AccountId, value: Balance) -> Result<()> {
-            let owner = self.env().caller();
-            self.allowance.insert((&owner, &spender), &value);
-            self.env().emit_event(Approval {
-                owner,
-                spender,
-                value,
-            });
-            Ok(())
-        }
-
-        #[ink(message)]
-        pub fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
-            self.allowance_impl(&owner, &spender)
-        }
-
         fn new_init(&mut self, initial_supply: Balance) {
             let caller = Self::env().caller();
             self.balance_of.insert(&caller, &initial_supply);
@@ -144,11 +76,11 @@ mod uniswap_v2_erc20 {
             });
         }
 
-        fn mint(&mut self, to: &AccountId, value: Balance) -> Result<()> {
+        fn mint(&mut self, to: &AccountId, value: Balance) -> Erc20Result<()> {
             if let Some(total_supply) = self.total_supply.checked_add(value) {
                 self.total_supply = total_supply;
             } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             let to_balance = self.balance_of_impl(to);
@@ -156,7 +88,7 @@ mod uniswap_v2_erc20 {
             if let Some(to_balance) = to_balance.checked_add(value) {
                 self.balance_of.insert(to, &(to_balance));
             } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             self.env().emit_event(Transfer {
@@ -164,14 +96,15 @@ mod uniswap_v2_erc20 {
                 to: Some(*to),
                 value,
             });
+
             Ok(())
         }
 
-        fn burn(&mut self, from: &AccountId, value: Balance) -> Result<()> {
+        fn burn(&mut self, from: &AccountId, value: Balance) -> Erc20Result<()> {
             if let Some(total_supply) = self.total_supply.checked_sub(value) {
                 self.total_supply = total_supply;
             } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             let from_balance = self.balance_of_impl(from);
@@ -179,7 +112,7 @@ mod uniswap_v2_erc20 {
             if let Some(from_balance) = from_balance.checked_sub(value) {
                 self.balance_of.insert(from, &(from_balance));
             } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             self.env().emit_event(Transfer {
@@ -190,15 +123,23 @@ mod uniswap_v2_erc20 {
             Ok(())
         }
 
+        fn balance_of_impl(&self, owner: &AccountId) -> Balance {
+            self.balance_of.get(owner).unwrap_or_default()
+        }
+
+        fn allowance_impl(&self, owner: &AccountId, spender: &AccountId) -> Balance {
+            self.allowance.get((owner, spender)).unwrap_or_default()
+        }
+
         fn transfer_from_to(
             &mut self,
             from: &AccountId,
             to: &AccountId,
             value: Balance,
-        ) -> Result<()> {
+        ) -> Erc20Result<()> {
             let from_balance = self.balance_of_impl(from);
             if from_balance < value {
-                return Err(Error::InsufficientBalance);
+                return Err(Erc20Error::InsufficientBalance);
             }
 
             let from_balance = self.balance_of_impl(from);
@@ -210,10 +151,10 @@ mod uniswap_v2_erc20 {
                     self.balance_of.insert(to, &(to_balance));
                     self.balance_of.insert(from, &(from_balance));
                 } else {
-                    return Err(Error::BalanceOverflowOrUnderflow);
+                    return Err(Erc20Error::BalanceOverflowOrUnderflow);
                 }
             } else {
-                return Err(Error::BalanceOverflowOrUnderflow);
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
             }
 
             self.env().emit_event(Transfer {
@@ -223,23 +164,63 @@ mod uniswap_v2_erc20 {
             });
             Ok(())
         }
+    }
 
-        /// Returns the account balance for the specified `owner`.
-        ///
-        /// Returns `0` if the account is non-existent.
-        ///
-        /// # Note
-        ///
-        /// Prefer to call this method over `balance_of` since this
-        /// works using references which are more efficient in Wasm.
-        #[inline]
-        fn balance_of_impl(&self, owner: &AccountId) -> Balance {
-            self.balance_of.get(owner).unwrap_or_default()
+    impl Erc20 for UniswapV2Erc20 {
+        #[ink(message)]
+        fn total_supply(&self) -> Balance {
+            self.total_supply
         }
 
-        #[inline]
-        fn allowance_impl(&self, owner: &AccountId, spender: &AccountId) -> Balance {
-            self.allowance.get((owner, spender)).unwrap_or_default()
+        #[ink(message)]
+        fn balance_of(&self, owner: AccountId) -> Balance {
+            self.balance_of_impl(&owner)
+        }
+
+        #[ink(message)]
+        fn transfer(&mut self, to: AccountId, value: Balance) -> Erc20Result<()> {
+            let from = self.env().caller();
+            self.transfer_from_to(&from, &to, value)
+        }
+
+        #[ink(message)]
+        fn transfer_from(
+            &mut self,
+            from: AccountId,
+            to: AccountId,
+            value: Balance,
+        ) -> Erc20Result<()> {
+            let caller = self.env().caller();
+            let allowance = self.allowance_impl(&from, &caller);
+            if allowance < value {
+                return Err(Erc20Error::InsufficientAllowance);
+            }
+            self.transfer_from_to(&from, &to, value)?;
+
+            if let Some(allowance) = allowance.checked_sub(value) {
+                self.allowance.insert((&from, &caller), &(allowance));
+            } else {
+                return Err(Erc20Error::BalanceOverflowOrUnderflow);
+            }
+
+            Ok(())
+        }
+
+        #[ink(message)]
+        fn approve(&mut self, spender: AccountId, value: Balance) -> Erc20Result<()> {
+            let owner = self.env().caller();
+            self.allowance.insert((&owner, &spender), &value);
+            self.env().emit_event(Approval {
+                owner,
+                spender,
+                value,
+            });
+            Ok(())
+        }
+
+        #[ink(message)]
+        fn allowance(&self, owner: AccountId, spender: AccountId) -> Balance {
+            self.allowance_impl(&owner, &spender)
         }
     }
 

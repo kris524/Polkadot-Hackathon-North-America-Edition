@@ -11,7 +11,9 @@
 mod uniswap_v2_callee;
 mod uniswap_v2_factory;
 mod uniswap_v2_pair;
+mod erc20;
 
 pub use uniswap_v2_callee::*;
 pub use uniswap_v2_factory::*;
 pub use uniswap_v2_pair::*;
+pub use erc20::*;
