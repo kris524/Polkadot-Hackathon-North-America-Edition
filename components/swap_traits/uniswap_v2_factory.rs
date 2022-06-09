@@ -33,6 +33,8 @@ use ink_lang as ink;
 //         log_value: u32 //1 for the first pair created, 2 for the second
 //     }
 
+
+
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
     #[ink(message)]
@@ -54,7 +56,7 @@ pub trait IUniswapV2Factory {
     fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
 
     #[ink(message)]
-    fn sat_fee_to(&mut self, address: AccountId);
+    fn set_fee_to(&mut self, address: AccountId);
 
     #[ink(message)]
     fn set_fee_to_setter(&mut self, address: AccountId);
