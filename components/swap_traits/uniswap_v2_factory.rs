@@ -33,8 +33,6 @@ use ink_lang as ink;
 //         log_value: u32 //1 for the first pair created, 2 for the second
 //     }
 
-
-
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
     #[ink(message)]
