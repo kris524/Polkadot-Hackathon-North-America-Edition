@@ -6,9 +6,10 @@ use ink_lang as ink;
 mod uniswap_v2_factory{
 
     use ink_env::AccountId;
-    use swap_traits::{IUniswapV2Factory};
+    use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
 
     use ink_lang as ink;
+
 
 
     #[ink(storage)]
@@ -38,7 +39,7 @@ mod uniswap_v2_factory{
     }
 
     impl IUniswapV2Factory for UniswapV2Factory {
-        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId {
+        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> UniswapFactoryResult<()> {
                 if token_a != token_b {
                     // Conditional Operator (? :)
                     // The conditional operator first evaluates an expression for a true or false value and then executes 
@@ -52,7 +53,7 @@ mod uniswap_v2_factory{
                         let token0: AccountId = token_b;
                         let token1: AccountId = token_a;
                     }
-                    if token0 != ??? && get_pair(token0, token1) == ??? {
+                    if token0 != "0x0" && get_pair(token0, token1) == "0x0" {
 
                     }
                     

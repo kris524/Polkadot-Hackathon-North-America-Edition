@@ -33,6 +33,15 @@ use ink_lang as ink;
 //         log_value: u32 //1 for the first pair created, 2 for the second
 //     }
 
+pub enum UniswapFactoryError {
+    IdenticalAddress,
+    ZeroAddress,
+    PairExists,
+}
+
+pub type UniswapFactoryResult<T> = core::result::Result<T, UniswapFactoryError>;
+
+
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
     #[ink(message)]
