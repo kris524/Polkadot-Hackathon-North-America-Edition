@@ -2,6 +2,7 @@ import css from "rollup-plugin-css-only";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
 import svelte from "rollup-plugin-svelte";
+import sveltePreprocess from 'svelte-preprocess';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -43,6 +44,9 @@ export default {
       compilerOptions: {
         dev: true,
       },
+      preprocess: sveltePreprocess({
+        postcss: true, // for tailwind
+      }),      
     }),
     css({ output: "bundle.css" }),
     resolve(),
