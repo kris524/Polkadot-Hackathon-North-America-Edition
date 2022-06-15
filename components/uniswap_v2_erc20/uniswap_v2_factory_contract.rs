@@ -56,6 +56,13 @@ mod uniswap_v2_factory{
                     if token0 != "0x0" && get_pair(token0, token1) == "0x0" {
 
                     }
+                    else {
+                        match condition {
+                            // token0 != "0x0" => UniswapFactoryError::ZeroAddress,
+
+
+                        }
+                    }
                     
                 }
         }
