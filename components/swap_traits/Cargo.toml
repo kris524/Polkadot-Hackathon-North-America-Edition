@@ -13,6 +13,8 @@ ink_lang = { version = "3", default-features = false }
 ink_prelude = { version = "3", default-features = false}
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
+ethereum-types = "0.13.1"
+uint = "0.9.3"
 
 [lib]
 name = "swap_traits"
