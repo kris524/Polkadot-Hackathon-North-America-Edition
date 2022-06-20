@@ -10,7 +10,7 @@ pub type MathResult<T> = core::result::Result<T, MathErrors>;
 
 
 use ethereum_types::U256;
-mod SafeMath {
+pub mod SafeMath {
     fn add(x: U256, y: U256) -> MathResult<()> {
         let z = x+y;
 
@@ -40,7 +40,7 @@ mod SafeMath {
             return Ok(z);
         }
         else{
-            return Err(MathErrors::MathAddOverflow);
+            return Err(MathErrors::MathMulOverflow);
         }
     }
 }
