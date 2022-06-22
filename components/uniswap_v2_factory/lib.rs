@@ -2,10 +2,11 @@
 
 use ink_lang as ink;
 
-#[ink::contrct]
+#[ink::contract]
 mod uniswap_v2_factory{
 
-    use ink_env::AccountId;
+    use ink_storage::Mapping;
+    use ink_storage::traits::SpreadAllocate;
     use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
 
     use ink_lang as ink;
@@ -13,11 +14,13 @@ mod uniswap_v2_factory{
 
 
     #[ink(storage)]
+    #[derive(SpreadAllocate)]
     pub struct UniswapV2Factory {
         fee_to: AccountId,
         fee_to_setter: AccountId,
         get_pair: Mapping<AccountId, Mapping<AccountId, AccountId>>,
         all_pairs: AccountId,
+        // balance: Balance
 
     }
 
@@ -31,14 +34,19 @@ mod uniswap_v2_factory{
 
     impl UniswapV2Factory {
 
-        #[ink(contstructor)]
-        pub fn new(_fee_to_setter: AccountId) {
-                fee_to_setter = _fee_to_setter;
+        #[ink(constructor)]
+        pub fn new( _fee_to_setter: AccountId) -> Self{
+                // self.fee_to_setter = self._fee_to_setter;
+                todo!();
+                ink_lang::utils::initialize_contract(|contract| {
+                    Self::new_init(contract, _fee_to_setter)
+                })
         }
   
     }
 
     impl IUniswapV2Factory for UniswapV2Factory {
+        #[ink(message)]
         fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> UniswapFactoryResult<()> {
                 if token_a != token_b {
                     // Conditional Operator (? :)
@@ -53,35 +61,29 @@ mod uniswap_v2_factory{
                         let token0: AccountId = token_b;
                         let token1: AccountId = token_a;
                     }
-                    if token0 != "0x0" && get_pair(token0, token1) == "0x0" {
-
-                    }
-                    else {
-                        match condition {
-                            // token0 != "0x0" => UniswapFactoryError::ZeroAddress,
-
-
-                        }
-                    }
+                    
+                       
+                    
+                    todo!();
                     
                 }
         }
-
+        #[ink(message)]
         fn all_pairs_length(&mut self) -> Balance {
-            return all_pairs.length;
+            return self.all_pairs.length;
         }
-
+        #[ink(message)]
         fn set_fee_to(&mut self, _fee_to: AccountId) {
             let sender = self.env().caller();
-            if sender == fee_to_setter {
-                fee_to = _fee_to;
+            if sender == self.fee_to_setter {
+                self.fee_to = _fee_to;
             }
         }
-
+        #[ink(message)]
         fn set_fee_to_setter(&mut self, _fee_to_setter: AccountId) {
             let sender = self.env().caller();
-            if sender == fee_to_setter {
-                fee_to_setter = _fee_to_setter;
+            if sender == self.fee_to_setter {
+                self.fee_to_setter = _fee_to_setter;
             }
         }
 
