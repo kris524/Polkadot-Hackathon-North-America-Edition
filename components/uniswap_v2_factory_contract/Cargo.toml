@@ -1,5 +1,5 @@
 [package]
-name = "uniswap_v2_factory"
+name = "uniswap_v2_factory_contract"
 version = "0.1.0"
 authors = ["[your_name] <[your_email]>"]
 edition = "2021"
@@ -13,6 +13,7 @@ ink_lang = { version = "3", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
+swap_traits = {path = "/Users/kristiyandilov/Polkadot-hackaton/components/swap_traits"}
 
 [lib]
 name = "uniswap_v2_factory"

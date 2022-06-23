@@ -5,9 +5,11 @@ use ink_lang as ink;
 #[ink::contract]
 mod uniswap_v2_factory{
 
-    use ink_storage::Mapping;
-    use ink_storage::traits::SpreadAllocate;
-    use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
+    use ink_storage::{traits::SpreadAllocate, Mapping};
+
+    // pub use swa
+    pub use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
+    // use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
 
     use ink_lang as ink;
 
@@ -69,7 +71,7 @@ mod uniswap_v2_factory{
                 }
         }
         #[ink(message)]
-        fn all_pairs_length(&mut self) -> Balance {
+        fn all_pairs_length(&self) -> Balance {
             return self.all_pairs.length;
         }
         #[ink(message)]
