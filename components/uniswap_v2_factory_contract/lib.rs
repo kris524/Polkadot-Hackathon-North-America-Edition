@@ -38,35 +38,39 @@ mod uniswap_v2_factory{
 
 
 
-
+    #[derive(Default)]
     #[ink(storage)]
     #[derive(SpreadAllocate)]
     pub struct UniswapV2Factory {
         fee_to: AccountId,
         fee_to_setter: AccountId,
         // get_pair: Mapping<AccountId, Mapping<AccountId, AccountId>>,
-        all_pairs: AccountId,
-        // balance: Balance
+        // all_pairs: AccountId,
+        fees: Balance
 
     }
 
 
     #[ink(event)]
     pub struct PairCreated {
+        #[ink(topic)]
         token0: AccountId,
+        #[ink(topic)]
         token1: AccountId,
+        #[ink(topic)]
         pair: Balance
     }
 
     impl UniswapV2Factory {
+        
 
         #[ink(constructor)]
-        pub fn new( _fee_to_setter: AccountId) -> Self{
-                // self.fee_to_setter = self._fee_to_setter;
-                todo!();
-                // ink_lang::utils::initialize_contract(|contract| {
-                //     Self::new_init(contract, _fee_to_setter)
-                // })
+        pub fn new(_fees: Balance) -> Self {
+            // Sets fees to zero if not in valid range
+            Self {
+                fees: if _fees >= 1000 { 0 } else { _fees },
+                ..Default::default()
+            }
         }
 
     }
@@ -140,11 +144,7 @@ mod uniswap_v2_factory{
 
     }
 
-    #[cfg(test)]
-    mod tests {
-        todo!();
-    }
-
+    
     
       
 }

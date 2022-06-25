@@ -6,5 +6,8 @@
   "scripts": {
     "build": "cd www && npm run build",
     "dev": "cd www && npm run dev"
+  },
+  "dependencies": {
+    "wasm-opt": "^1.3.0"
   }
 }

@@ -15,8 +15,9 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
 swap_traits = {path = "/Users/kristiyandilov/Polkadot-hackaton/components/swap_traits"}
 
+
 [lib]
-name = "uniswap_v2_factory"
+name = "uniswap_v2_factory_contract"
 path = "lib.rs"
 crate-type = [
 	# Used for normal contract Wasm blobs.
@@ -34,3 +35,4 @@ std = [
     "scale-info/std",
 ]
 ink-as-dependency = []
+
