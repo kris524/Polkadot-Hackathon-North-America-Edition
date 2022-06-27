@@ -87,17 +87,17 @@ mod uniswap_v2_factory{
         }
 
         #[ink(message)]
-        fn set_fee_to(&mut self, _fee_to: AccountId) {
+        fn set_fee_to(&mut self, fee_to: AccountId) {
             let sender = self.env().caller();
             if sender == self.fee_to_setter {
-                self.fee_to = _fee_to;
+                self.fee_to = fee_to;
             }
         }
         #[ink(message)]
-        fn set_fee_to_setter(&mut self, _fee_to_setter: AccountId) {
+        fn set_fee_to_setter(&mut self, fee_to_setter: AccountId) {
             let sender = self.env().caller();
             if sender == self.fee_to_setter {
-                self.fee_to_setter = _fee_to_setter;
+                self.fee_to_setter = fee_to_setter;
             }
         }
     }
