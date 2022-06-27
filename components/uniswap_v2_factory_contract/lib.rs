@@ -71,35 +71,15 @@ mod uniswap_v2_factory{
             todo!();
         }
 
-        // #[ink(message)]
-        // fn all_pairs_length(&mut self)  {
-        //     // return self.all_pairs.length;
-        //     todo!();
-        // }
+        #[ink(message)]
+        fn all_pairs_length(&self) -> u64 {
+            todo!()
+        }
 
-        // #[ink(message)]                                                 //-> UniswapFactoryResult<()>
-        // fn create_pair(&mut self, token_a: AccountId, token_b: AccountId)  {
-                // if token_a != token_b {
-                //     // Conditional Operator (? :)
-                //     // The conditional operator first evaluates an expression for a true or false value and then executes 
-                //     // one of the two given statements depending upon the result of the evaluation.
-
-                //     if token_b > token_a {
-                //         let token0: AccountId = token_a;
-                //         let token1: AccountId = token_b;
-                //     }
-                //     else {
-                //         let token0: AccountId = token_b;
-                //         let token1: AccountId = token_a;
-                //     }
-                    
-                       
-                    
-                //     todo!();
-                    
-                // }
-        //         todo!();
-        // }
+         #[ink(message)]
+        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId {
+            todo!()
+        }
 
         #[ink(message)]
         fn set_fee_to(&mut self, _fee_to: AccountId) {

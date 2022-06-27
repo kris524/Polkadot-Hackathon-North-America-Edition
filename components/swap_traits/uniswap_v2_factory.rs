@@ -56,11 +56,11 @@ pub trait IUniswapV2Factory {
     #[ink(message)]
     fn all_pairs(&self, log_value: u64) -> AccountId;
 
-    //#[ink(message)]
-    //fn all_pairs_length(&self) -> u64;
+    #[ink(message)]
+    fn all_pairs_length(&self) -> u64;
 
-    //#[ink(message)]
-    //fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
+    #[ink(message)]
+    fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
 
     #[ink(message)]
     fn set_fee_to(&mut self, address: AccountId);
