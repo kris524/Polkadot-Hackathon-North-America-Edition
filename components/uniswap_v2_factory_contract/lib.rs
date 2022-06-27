@@ -1,14 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![allow(unused)]
 
 use ink_lang as ink;
 
 #[ink::contract]
 mod uniswap_v2_factory{
     use ink_prelude::vec::Vec;
-    use ink_lang as ink;
     use ink_storage::{traits::SpreadAllocate, Mapping};
-    // pub use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
     use swap_traits::IUniswapV2Factory;
 
     #[derive(Default)]
@@ -82,7 +79,7 @@ mod uniswap_v2_factory{
         }
 
          #[ink(message)]
-        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId {
+        fn create_pair(&mut self, _token_a: AccountId, _token_b: AccountId) -> AccountId {
             todo!()
         }
 
