@@ -5,6 +5,7 @@ use ink_lang as ink;
 
 #[ink::contract]
 mod uniswap_v2_factory{
+    use ink_prelude::vec::Vec;
     use ink_lang as ink;
     use ink_storage::{traits::SpreadAllocate, Mapping};
     // pub use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
@@ -19,6 +20,7 @@ mod uniswap_v2_factory{
         /// This key tuple is ordered.
         /// Accessing it backward will always yield None.
         get_pair_map: Mapping<(AccountId, AccountId), AccountId>,
+        all_pairs: Vec<AccountId>,
     }
 
 
@@ -70,13 +72,13 @@ mod uniswap_v2_factory{
         }
 
         #[ink(message)]
-        fn all_pairs(&self, log_value: u64) -> AccountId {
-            todo!();
+        fn all_pairs(&self) -> Vec<AccountId> {
+            self.all_pairs.clone()
         }
 
         #[ink(message)]
         fn all_pairs_length(&self) -> u64 {
-            todo!()
+            u64::try_from(self.all_pairs.len()).expect("overflow")
         }
 
          #[ink(message)]

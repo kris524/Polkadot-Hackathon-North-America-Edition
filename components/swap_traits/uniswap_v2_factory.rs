@@ -5,6 +5,7 @@
 //! - <https://github.com/Uniswap/v2-core/blob/master/contracts/interfaces/IUniswapV2Factory.sol>
 //! - <https://docs.uniswap.org/protocol/V2/reference/smart-contracts/factory>
 
+use ink_prelude::vec::Vec;
 use ink_env::AccountId;
 use ink_lang as ink;
 
@@ -54,7 +55,7 @@ pub trait IUniswapV2Factory {
     fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> Option<AccountId>;
 
     #[ink(message)]
-    fn all_pairs(&self, log_value: u64) -> AccountId;
+    fn all_pairs(&self) -> Vec<AccountId>;
 
     #[ink(message)]
     fn all_pairs_length(&self) -> u64;
