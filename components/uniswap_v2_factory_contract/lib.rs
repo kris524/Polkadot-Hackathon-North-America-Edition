@@ -3,7 +3,7 @@
 use ink_lang as ink;
 
 #[ink::contract]
-mod uniswap_v2_factory{
+mod uniswap_v2_factory {
     use ink_prelude::vec::Vec;
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use swap_traits::IUniswapV2Factory;
@@ -20,7 +20,6 @@ mod uniswap_v2_factory{
         all_pairs: Vec<AccountId>,
     }
 
-
     #[ink(event)]
     pub struct PairCreated {
         #[ink(topic)]
@@ -28,26 +27,21 @@ mod uniswap_v2_factory{
         #[ink(topic)]
         token1: AccountId,
         #[ink(topic)]
-        pair: Balance
+        pair: Balance,
     }
 
     impl UniswapV2Factory {
         #[ink(constructor)]
         pub fn new(fee_to_setter: AccountId) -> Self {
-            ink_lang::utils::initialize_contract(|this: &mut Self| {
-                this.new_init(fee_to_setter)
-            })
+            ink_lang::utils::initialize_contract(|this: &mut Self| this.new_init(fee_to_setter))
         }
 
         fn new_init(&mut self, fee_to_setter: AccountId) {
             self.fee_to_setter = fee_to_setter
         }
     }
-  
-    
 
     impl IUniswapV2Factory for UniswapV2Factory {
-        
         #[ink(message)]
         fn fee_to(&self) -> AccountId {
             self.fee_to
@@ -78,7 +72,7 @@ mod uniswap_v2_factory{
             u64::try_from(self.all_pairs.len()).expect("overflow")
         }
 
-         #[ink(message)]
+        #[ink(message)]
         fn create_pair(&mut self, _token_a: AccountId, _token_b: AccountId) -> AccountId {
             todo!()
         }
@@ -98,5 +92,4 @@ mod uniswap_v2_factory{
             }
         }
     }
-
 }

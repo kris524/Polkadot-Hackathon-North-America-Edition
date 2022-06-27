@@ -5,9 +5,9 @@
 //! - <https://github.com/Uniswap/v2-core/blob/master/contracts/interfaces/IUniswapV2Factory.sol>
 //! - <https://docs.uniswap.org/protocol/V2/reference/smart-contracts/factory>
 
-use ink_prelude::vec::Vec;
 use ink_env::AccountId;
 use ink_lang as ink;
+use ink_prelude::vec::Vec;
 
 // Note on access modifier (https://www.c-sharpcorner.com/article/variables-and-types-in-solidity/)
 
@@ -41,7 +41,6 @@ pub enum UniswapFactoryError {
 }
 
 pub type UniswapFactoryResult<T> = core::result::Result<T, UniswapFactoryError>;
-
 
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
