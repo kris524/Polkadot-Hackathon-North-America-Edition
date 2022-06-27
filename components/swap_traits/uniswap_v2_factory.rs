@@ -51,7 +51,7 @@ pub trait IUniswapV2Factory {
     fn fee_to_setter(&self) -> AccountId;
 
     #[ink(message)]
-    fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId;
+    fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> Option<AccountId>;
 
     #[ink(message)]
     fn all_pairs(&self, log_value: u64) -> AccountId;

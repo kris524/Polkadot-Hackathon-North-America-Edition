@@ -16,10 +16,9 @@ mod uniswap_v2_factory{
     pub struct UniswapV2Factory {
         fee_to: AccountId,
         fee_to_setter: AccountId,
-        // get_pair: Mapping<AccountId, Mapping<AccountId, AccountId>>,
-        // all_pairs: AccountId,
-        fees: Balance
-
+        /// This key tuple is ordered.
+        /// Accessing it backward will always yield None.
+        get_pair_map: Mapping<(AccountId, AccountId), AccountId>,
     }
 
 
@@ -34,17 +33,16 @@ mod uniswap_v2_factory{
     }
 
     impl UniswapV2Factory {
-        
-
         #[ink(constructor)]
-        pub fn new(_fees: Balance) -> Self {
-            // Sets fees to zero if not in valid range
-            Self {
-                fees: if _fees >= 1000 { 0 } else { _fees },
-                ..Default::default()
-            }
+        pub fn new(fee_to_setter: AccountId) -> Self {
+            ink_lang::utils::initialize_contract(|this: &mut Self| {
+                this.new_init(fee_to_setter)
+            })
         }
 
+        fn new_init(&mut self, fee_to_setter: AccountId) {
+            self.fee_to_setter = fee_to_setter
+        }
     }
   
     
@@ -53,17 +51,22 @@ mod uniswap_v2_factory{
         
         #[ink(message)]
         fn fee_to(&self) -> AccountId {
-            todo!();
+            self.fee_to
         }
 
         #[ink(message)]
         fn fee_to_setter(&self) -> AccountId {
-            todo!();
+            self.fee_to_setter
         }
 
         #[ink(message)]
-        fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId{
-            todo!();
+        fn get_pair(&self, token_a: AccountId, token_b: AccountId) -> Option<AccountId> {
+            let (token_a, token_b) = if token_a < token_b {
+                (token_a, token_b)
+            } else {
+                (token_b, token_a)
+            };
+            self.get_pair_map.get((token_a, token_b))
         }
 
         #[ink(message)]
