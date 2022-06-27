@@ -8,36 +8,7 @@ mod uniswap_v2_factory{
     use ink_lang as ink;
     use ink_storage::{traits::SpreadAllocate, Mapping};
     // pub use swap_traits::{IUniswapV2Factory, UniswapFactoryError, UniswapFactoryResult};
-
-
-    #[ink::trait_definition]
-    pub trait IUniswapV2Factory {
-        #[ink(message)]
-        fn fee_to(&self) -> AccountId;
-
-        #[ink(message)]
-        fn fee_to_setter(&self) -> AccountId;
-
-        #[ink(message)]
-        fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId;
-
-        #[ink(message)]
-        fn all_pairs(&self, log_value: u64) -> AccountId;
-
-        // #[ink(message)]
-        // fn all_pairs_length(&mut self) -> u64;
-
-        // #[ink(message)]
-        // fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
-
-        #[ink(message)]
-        fn set_fee_to(&mut self, address: AccountId);
-
-        #[ink(message)]
-        fn set_fee_to_setter(&mut self, address: AccountId);
-    }
-
-
+    use swap_traits::IUniswapV2Factory;
 
     #[derive(Default)]
     #[ink(storage)]
