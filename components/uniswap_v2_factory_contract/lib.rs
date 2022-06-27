@@ -51,6 +51,32 @@ mod uniswap_v2_factory{
 
     impl IUniswapV2Factory for UniswapV2Factory {
         
+        #[ink(message)]
+        fn fee_to(&self) -> AccountId {
+            todo!();
+        }
+
+        #[ink(message)]
+        fn fee_to_setter(&self) -> AccountId {
+            todo!();
+        }
+
+        #[ink(message)]
+        fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId{
+            todo!();
+        }
+
+        #[ink(message)]
+        fn all_pairs(&self, log_value: u64) -> AccountId {
+            todo!();
+        }
+
+        // #[ink(message)]
+        // fn all_pairs_length(&mut self)  {
+        //     // return self.all_pairs.length;
+        //     todo!();
+        // }
+
         // #[ink(message)]                                                 //-> UniswapFactoryResult<()>
         // fn create_pair(&mut self, token_a: AccountId, token_b: AccountId)  {
                 // if token_a != token_b {
@@ -74,11 +100,7 @@ mod uniswap_v2_factory{
                 // }
         //         todo!();
         // }
-        // #[ink(message)]
-        // fn all_pairs_length(&mut self)  {
-        //     // return self.all_pairs.length;
-        //     todo!();
-        // }
+
         #[ink(message)]
         fn set_fee_to(&mut self, _fee_to: AccountId) {
             let sender = self.env().caller();
@@ -93,30 +115,6 @@ mod uniswap_v2_factory{
                 self.fee_to_setter = _fee_to_setter;
             }
         }
-
-        #[ink(message)]
-        fn fee_to(&self) -> AccountId {
-            todo!();
-        }
-
-        #[ink(message)]
-        fn fee_to_setter(&self) -> AccountId {
-            todo!();
-        }
-
-        #[ink(message)]
-        fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId{
-            todo!();
-        }
-
-        #[ink(message)]
-        fn all_pairs(&self, log_value: u64) -> AccountId {
-            todo!();
-        }
-
     }
 
-    
-    
-      
 }
