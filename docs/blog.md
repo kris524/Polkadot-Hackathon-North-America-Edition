@@ -45,7 +45,18 @@ todo
 - `uint` -> ?
 - `uint112` -> ?
 
-todo
+More:
+
+- Large integers types can be had in the [`ethereum_types`] crate.
+  It is not tied to Ethereum specifically.
+- Solidity safe math libraries aren't need in Rust &mdash;
+  Rust has checked arithmetic functios on all its types,
+  as does the `ethereum_types` crate's.
+- Rust doesn't panic on overflow for primitive types by default in release mode,
+  but this can and probably should be turned on for smart contracts by setting
+  `overflow-checks = true` in the `[profile.dev]` section of the manifest.
+
+[`ethereum_types`]: https://docs.rs/ethereum_types
 
 
 ## Being a manager again (2022/05/30)
@@ -332,3 +343,79 @@ guessed that the cargo features weren't configured correctly.
 This would be tough to figure out without a magic combination of knowledge and
 intuition.
 
+
+## Solidity math helpers aren't needed in Rust (2022/06/21)
+
+The uniswap codebase includes a safe math library that
+includes basic arithmetic functions that error on overflow.
+Rust doesn't need these since its integers have checked arithmetic methods.
+
+We discovered that we can get large integer types from the [`ethereum_types`] crate.
+This crate is not Ethereum specific.
+The types in this crate panic on overflow by default,
+and also include checked arithmetic methods.
+
+I have realized that probably all Rust smart contract projects,
+and maybe just all Rust projects,
+should put this in their manifest:
+
+```toml
+[profile.release]
+overflow-checks = true
+```
+
+In retrospect I think it was a mistake for Rust to not do overflow checks by default &mdash;
+it's a best practice now to only use Rust arithmetic operators when overflow is obviously not possible,
+and instead use arithmetic methods appropriate for each specific operation.
+
+
+## Svelte and Tailwind are super fun (2022/06/22)
+
+My job on this project is implementing the frontend,
+and I am taking the opportunity to learn both Svelte and Tailwind,
+and liking both a lot.
+
+Getting them both working together with `rollup` took some frustrating effort:
+`rollup`'s "watch" mode kept rebuilding the project infinitely.
+I found some other people running into this problem but no solutions.
+Eventually I figured out that my `tailwind.css.js` configuration
+was seemingly causing postcss to touch files in my `public/build`
+directory, causing `rollup` to rebuild, etc.
+
+My original config, as suggested on the internet, was:
+
+```JavaScript
+module.exports = {
+  content: [
+    "./public/**/*.html",
+    "./src/**/*.svelte",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+I changed it to
+
+```JavaScript
+module.exports = {
+  content: [
+    "./src/**/*.svelte",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+Svelte is fun,
+but getting everything properly reactive feels a bit fiddly.
+There's a lot to learn.
+
+Tailwind is a pure productivity booster.
+It's as fun as people say.
+
+I am having fun doing frontend development.
