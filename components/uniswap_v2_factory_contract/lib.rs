@@ -26,8 +26,8 @@ mod uniswap_v2_factory{
         // #[ink(message)]
         // fn all_pairs_length(&mut self) -> u64;
 
-        // #[ink(message)]
-        // fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
+        #[ink(message)]
+        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId) -> AccountId;
 
         #[ink(message)]
         fn set_fee_to(&mut self, address: AccountId);
@@ -78,24 +78,28 @@ mod uniswap_v2_factory{
     
 
     impl IUniswapV2Factory for UniswapV2Factory {
-        
-        // #[ink(message)]                                                 //-> UniswapFactoryResult<()>
-        // fn create_pair(&mut self, token_a: AccountId, token_b: AccountId)  {
-                // if token_a != token_b {
-                //     // Conditional Operator (? :)
-                //     // The conditional operator first evaluates an expression for a true or false value and then executes 
-                //     // one of the two given statements depending upon the result of the evaluation.
 
-                //     if token_b > token_a {
-                //         let token0: AccountId = token_a;
-                //         let token1: AccountId = token_b;
-                //     }
-                //     else {
-                //         let token0: AccountId = token_b;
-                //         let token1: AccountId = token_a;
-                //     }
+        
+        
+        
+        #[ink(message)]                                                 //-> UniswapFactoryResult<()>
+        fn create_pair(&mut self, token_a: AccountId, token_b: AccountId)  {
+                if token_a != token_b {
+                    // Conditional Operator (? :)
+                    // The conditional operator first evaluates an expression for a true or false value and then executes 
+                    // one of the two given statements depending upon the result of the evaluation.
+
+                    if token_b > token_a {
+                        let token0: AccountId = token_a;
+                        let token1: AccountId = token_b;
+                    }
+                    else {
+                        let token0: AccountId = token_b;
+                        let token1: AccountId = token_a;
+                    }
                     
-                       
+                }
+            }   
                     
                 //     todo!();
                     
