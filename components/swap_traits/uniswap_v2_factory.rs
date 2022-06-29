@@ -7,6 +7,7 @@
 
 use ink_env::AccountId;
 use ink_lang as ink;
+use ink_prelude::vec::Vec;
 
 // Note on access modifier (https://www.c-sharpcorner.com/article/variables-and-types-in-solidity/)
 
@@ -41,7 +42,6 @@ pub enum UniswapFactoryError {
 
 pub type UniswapFactoryResult<T> = core::result::Result<T, UniswapFactoryError>;
 
-
 #[ink::trait_definition]
 pub trait IUniswapV2Factory {
     #[ink(message)]
@@ -51,10 +51,10 @@ pub trait IUniswapV2Factory {
     fn fee_to_setter(&self) -> AccountId;
 
     #[ink(message)]
-    fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> AccountId;
+    fn get_pair(&self, toekn_a: AccountId, token_b: AccountId) -> Option<AccountId>;
 
     #[ink(message)]
-    fn all_pairs(&self, log_value: u64) -> AccountId;
+    fn all_pairs(&self) -> Vec<AccountId>;
 
     #[ink(message)]
     fn all_pairs_length(&self) -> u64;
