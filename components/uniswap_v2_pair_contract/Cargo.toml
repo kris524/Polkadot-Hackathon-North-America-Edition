@@ -1,5 +1,5 @@
 [package]
-name = "swap_traits"
+name = "uniswap_v2_pair_contract"
 version = "0.1.0"
 authors = ["[your_name] <[your_email]>"]
 edition = "2021"
@@ -10,17 +10,16 @@ ink_metadata = { version = "3", default-features = false, features = ["derive"],
 ink_env = { version = "3", default-features = false }
 ink_storage = { version = "3", default-features = false }
 ink_lang = { version = "3", default-features = false }
-ink_prelude = { version = "3", default-features = false}
+
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2", default-features = false, features = ["derive"], optional = true }
-ethereum-types = "0.13.1"
-uint = "0.9.3"
 
 [lib]
-name = "swap_traits"
+name = "uniswap_v2_pair_contract"
 path = "lib.rs"
 crate-type = [
-	"rlib", # Just a library, not a contract.
+	# Used for normal contract Wasm blobs.
+	"cdylib",
 ]
 
 [features]

@@ -1,7 +1,7 @@
 //! Manages token pairs.
 //!
 //! # References
-//!
+//! 
 //! - <https://github.com/Uniswap/v2-core/blob/master/contracts/interfaces/IUniswapV2Factory.sol>
 //! - <https://docs.uniswap.org/protocol/V2/reference/smart-contracts/factory>
 
